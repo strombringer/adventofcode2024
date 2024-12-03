@@ -2,31 +2,18 @@ package main
 
 import (
 	"fmt"
-	"os"
 	"slices"
 	"strconv"
 	s "strings"
 )
 
-func check(e error) {
-	if e != nil {
-		panic(e)
-	}
-}
-
-func Abs(x int) int {
-	if x < 0 {
-		return -x
-	}
-	return x
-}
-
 func main() {
-	// Preparation
-	var input, err = os.ReadFile("./inputs/day01")
-	check(err)
+	var lines = GetInputData("./inputs/day02")
+	Day01(lines)
+}
 
-	var lines = s.Split(string(input), "\n")
+func Day01(lines []string) {
+	// Preparation
 
 	var leftNumbers = make([]int, len(lines))
 	var rightNumbers = make([]int, len(lines))

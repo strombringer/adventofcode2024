@@ -1,0 +1,91 @@
+package main
+
+import (
+	"fmt"
+	"strconv"
+	s "strings"
+)
+
+func main() {
+	var lines = GetInputData("./inputs/day02")
+	Day02Part1(lines)
+	Day02Part2(lines)
+}
+
+// Checks if the levels are safe.
+// Will return -1 if they are safe and the 0-based index if it's not safe.
+func IsSafe(entry []string) int {
+	var lastDiff = 0
+	for i := 0; i < len(entry)-1; i++ {
+		var current, _ = strconv.Atoi(entry[i])
+		var next, _ = strconv.Atoi(entry[i+1])
+		var diff = current - next
+
+		if Abs(diff) < 1 || Abs(diff) > 3 {
+			return i + 1
+		}
+
+		if lastDiff != 0 && !IsSameSign(lastDiff, diff) {
+			return i + 1
+		}
+		lastDiff = diff
+	}
+	return -1
+}
+
+func Day02Part1(lines []string) {
+	// Part 1
+	var safeReports = 0
+
+	for _, line := range lines {
+		var entry = s.Fields(line)
+		if len(entry) == 0 {
+			break
+		}
+
+		if IsSafe(entry) == -1 {
+			safeReports = safeReports + 1
+		}
+	}
+
+	fmt.Println("Answer Part 1: ", safeReports)
+}
+
+func Day02Part2(lines []string) {
+	// Part 2.2
+	var safeReports = 0
+
+	var problematicEntries = make(map[int][]string)
+	var removedEntries = make(map[int][]string)
+
+	for i := 0; i < len(lines); i++ {
+		var entry = s.Fields(lines[i])
+		if len(entry) == 0 {
+			break
+		}
+
+		var problematicIndex = IsSafe(entry)
+		if problematicIndex == -1 {
+			safeReports = safeReports + 1
+		} else {
+			entry = RemoveIndex(entry, problematicIndex)
+			problematicEntries[i] = entry
+		}
+	}
+
+	for k, v := range problematicEntries {
+		checkIndex := IsSafe(v)
+		if checkIndex == -1 {
+			//var original = lines[k]
+			//fmt.Println(original, " --> ", v)
+			safeReports = safeReports + 1
+		} else {
+			var original = lines[k]
+			removedEntries[k] = v
+			fmt.Println(original, " --> ", v)
+		}
+	}
+
+	fmt.Println("WRONG Answer Part 2: ", safeReports)
+	// Answer 436 is not correct
+}

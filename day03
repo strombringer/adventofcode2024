@@ -1,0 +1,65 @@
+package main
+
+import (
+	"fmt"
+	"regexp"
+	"strconv"
+)
+
+func main() {
+	var lines = GetInputData("./inputs/day02")
+	Day03Part1(lines)
+	Day03Part2(lines)
+}
+
+func CalculateProduct(match []string) int {
+	var a, _ = strconv.Atoi(match[1])
+	var b, _ = strconv.Atoi(match[2])
+	var product = a * b
+	return product
+}
+
+func Day03Part1(lines []string) {
+	var r, _ = regexp.Compile(`mul\(([0-9]{1,3}),([0-9]{1,3})\)`)
+
+	var result = 0
+
+	for _, line := range lines {
+		var matches = r.FindAllStringSubmatch(line, -1)
+		// fmt.Println(matches)
+
+		for i := 0; i < len(matches); i++ {
+			var match = matches[i]
+			var product = CalculateProduct(match)
+			result = result + product
+		}
+	}
+
+	fmt.Println("Answer Day03 Part 1: ", result)
+}
+
+func Day03Part2(lines []string) {
+	var r, _ = regexp.Compile(`do\(\)|don't\(\)|mul\(([0-9]{1,3}),([0-9]{1,3})\)`)
+
+	var result = 0
+
+	var isEnabled = true
+	for _, line := range lines {
+		var matches = r.FindAllStringSubmatch(line, -1)
+
+		for i := 0; i < len(matches); i++ {
+			var match = matches[i]
+
+			if match[0] == "do()" {
+				isEnabled = true
+			} else if match[0] == "don't()" {
+				isEnabled = false
+			} else if isEnabled {
+				var product = CalculateProduct(match)
+				result = result + product
+			}
+		}
+	}
+
+	fmt.Println("Answer Day03 Part 2: ", result)
+}
