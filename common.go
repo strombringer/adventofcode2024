@@ -25,7 +25,9 @@ func IsSameSign(x int, y int) bool {
 func RemoveIndex(s []string, index int) []string {
 	ret := make([]string, 0, len(s)-1)
 	ret = append(ret, s[:index]...)
-	return append(ret, s[index+1:]...)
+	ret = append(ret, s[index+1:]...)
+
+	return ret
 }
 
 func GetInputData(path string) []string {

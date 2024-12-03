@@ -76,16 +76,25 @@ func Day02Part2(lines []string) {
 	for k, v := range problematicEntries {
 		checkIndex := IsSafe(v)
 		if checkIndex == -1 {
-			//var original = lines[k]
-			//fmt.Println(original, " --> ", v)
 			safeReports = safeReports + 1
 		} else {
+			// maybe this can be improved by just trying to remove the field at checkIndex and checkIndex+1?
 			var original = lines[k]
-			removedEntries[k] = v
-			fmt.Println(original, " --> ", v)
+			removedEntries[k] = s.Fields(original)
 		}
 	}
 
-	fmt.Println("WRONG Answer Part 2: ", safeReports)
-	// Answer 436 is not correct
+	// brute force the original version from removedEntries,
+	// by removing every number from the line one by one and checking the result with IsSafe
+	for _, v := range removedEntries {
+		for i := 0; i < len(v); i++ {
+			var cleanedEntry = RemoveIndex(v, i)
+			if IsSafe(cleanedEntry) == -1 {
+				safeReports = safeReports + 1
+				break
+			}
+		}
+	}
+
+	fmt.Println("Answer Part 2: ", safeReports)
 }
