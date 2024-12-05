@@ -2,6 +2,7 @@ package main
 
 import (
 	"os"
+	"strconv"
 	s "strings"
 )
 
@@ -16,6 +17,11 @@ func Abs(x int) int {
 		return -x
 	}
 	return x
+}
+
+func StringToInt(input string) int {
+	var result, _ = strconv.Atoi(input)
+	return result
 }
 
 func IsSameSign(x int, y int) bool {
@@ -36,4 +42,16 @@ func GetInputData(path string) []string {
 
 	var lines = s.Split(string(input), "\n")
 	return lines
+}
+
+func IsEqual(a, b []int) bool {
+	if len(a) != len(b) {
+		return false
+	}
+	for i := range a {
+		if a[i] != b[i] {
+			return false
+		}
+	}
+	return true
 }

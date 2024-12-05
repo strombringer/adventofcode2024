@@ -1,0 +1,89 @@
+package main
+
+import (
+	"fmt"
+	"regexp"
+	"slices"
+	"strings"
+)
+
+func main() {
+	// var lines = GetInputData("./inputs/day05_example1")
+	var lines = GetInputData("./inputs/day05")
+
+	Day05(lines)
+}
+
+func Day05(lines []string) {
+
+	var conditionRegex, _ = regexp.Compile(`([0-9]+)[|]([0-9]+)`)
+
+	var conditions = make(map[int]*Set[int])
+
+	var startIndex = 0
+
+	// Parse Conditions and put them in a Map:Set
+	for i, line := range lines {
+		var conditionValues = conditionRegex.FindAllStringSubmatch(line, -1)
+		if conditionValues != nil {
+			var left = StringToInt(conditionValues[0][1])
+			var right = StringToInt(conditionValues[0][2])
+
+			m, exists := conditions[left]
+			if exists {
+				m.Add(right)
+			} else {
+				var s = NewSet[int]()
+				s.Add(right)
+				conditions[left] = s
+			}
+		} else {
+			startIndex = i
+			break
+		}
+	}
+	//fmt.Println(conditions)
+
+	// Comparer to order the pages
+	pageComparer := func(a, b int) int {
+		m, exists := conditions[a]
+		if exists && m.Has(b) {
+			return -1
+		}
+		return 1
+	}
+
+	var pageSumPart1 = 0
+	var pageSumPart2 = 0
+
+	// Parse the pages and check if they are in the correct order
+	for i := startIndex + 1; i < len(lines); i++ {
+		var entries = strings.Split(lines[i], ",")
+		var pages = make([]int, 0)
+		for _, entry := range entries {
+			var number = StringToInt(entry)
+			pages = append(pages, number)
+		}
+		fmt.Print(pages, " --> ")
+
+		var pagesSorted = make([]int, len(pages))
+		copy(pagesSorted, pages)
+
+		slices.SortFunc(pagesSorted, pageComparer)
+		fmt.Print(pagesSorted)
+
+		if slices.Equal(pages, pagesSorted) {
+			fmt.Print(" <-- OK!")
+			var middlePage = pages[len(pages)/2]
+			pageSumPart1 = pageSumPart1 + middlePage
+		} else {
+			fmt.Print(" <-- NOT OK!")
+			var middlePage = pagesSorted[len(pagesSorted)/2]
+			pageSumPart2 = pageSumPart2 + middlePage
+		}
+		fmt.Println()
+	}
+
+	fmt.Println("Answer Day 5 Part 1: ", pageSumPart1)
+	fmt.Println("Answer Day 5 Part 2: ", pageSumPart2)
+}
